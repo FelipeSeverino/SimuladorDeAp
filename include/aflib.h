@@ -1,18 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "datast.h"
 
 #ifndef AFLIB_H
 #define AFLIB_H
 
-typedef struct estado;
-typedef struct pilha;
-typedef struct transicao;
-typedef struct af;
+typedef struct estado ESTADO;
+typedef struct transicao TRANSICAO;
+typedef struct af AF;
 
 typedef struct af {
     ESTADO *h_estado;
-    TRANSICAO *l_transicao;
+    TRANSICAO *h_transicao;
     PILHA *pilha;
 } AF;
 
@@ -25,10 +25,11 @@ AF* criarAF() {
     }
 
     novoAF->h_estado = NULL;
-    novoAF->l_transicao = NULL;
+    novoAF->h_transicao = NULL;
 
     return novoAF;
 }
+
 
 typedef struct estado {
     int inicial; // 0 = false, 1 = true
@@ -55,7 +56,8 @@ ESTADO* criarEstado(char *nome, int inicial, int final) {
     return novoEstado;
 }
 
-void inserirEstado(ESTADO *estado, AF *af) {
+void inserirEstado(char *nome, int inicial, int final, AF *af) {
+    ESTADO *estado = criarEstado(nome, inicial, final);
     if (af == NULL) {
         printf("AF invalido!! \n");
         return;
@@ -125,14 +127,16 @@ void inserirTransicao(char symbol, char insertPile, char popPile, char *from, ch
         return;
     }
 
-    if (af->l_transicao == NULL) {
-        af->l_transicao = transicao;
+    if (af->h_transicao == NULL) {
+        af->h_transicao = transicao;
     }
     else {
-        TRANSICAO *currentTransicao = af->l_transicao;
+        TRANSICAO *currentTransicao = af->h_transicao;
         while (currentTransicao->next != NULL) {
             currentTransicao = currentTransicao->next;
         }
         currentTransicao->next = transicao;
     }
 }
+
+#endif

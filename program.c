@@ -6,6 +6,9 @@
 #include "include/graphviz/cgraph.h"
 #include "include/graphviz/cdt.h"
 
+void simulacao();
+void generateAutomatonDot(AF *af, const char *filename);
+
 int main() {
     while (1) {
         printf("---------Menu---------\n1 - Iniciar simulacao\n2 - Encerrar o programa\ncomando >> ");
@@ -30,5 +33,81 @@ int main() {
 
 
 void simulacao() {
-    
+    AF *af = criarAF();
+
+    //Leitura dos estados
+    int opcao = 0;
+    int nEstados = 0;
+    while (1) { //Criacao de estados
+        printf("\n\n1 - Criar novo estado\n2 - Proximo passo\n");
+        printf("comando >> ");
+        scanf("%d", &opcao);
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+
+        if (opcao == 2 && nEstados < 1) {
+            printf("Crie ao menos um estado!");
+            continue;
+        }
+
+         if (opcao == 2) {
+            break;
+        }
+
+        char nome[5];
+        printf("Digite o nome do estado: \n");
+        fgets(nome, 5, stdin);
+
+        int inicial = 0;
+        int final = 0;
+
+        if (af->h_estado == NULL || af->h_estado != NULL && af->h_estado->inicial == 0) {
+            printf("Eh inicial? (0 ou 1) ");
+            scanf("%d", &inicial);
+        }
+
+        printf("Eh final? (0 ou 1) ");
+        scanf("%d", &final);
+
+        inserirEstado(nome, inicial, final, af);
+        nEstados++;
+    }
+
+
+    generateAutomatonDot(af, "teste.dot");
+}
+
+
+void generateAutomatonDot(AF *af, const char *filename) {
+    GVC_t *gvc;
+    Agraph_t *graph;
+    FILE *fp;
+
+    gvc = gvContext();
+
+    graph = agopen("automaton", Agdirected, NULL);
+
+    ESTADO *currentState = af->h_estado;
+    while (currentState != NULL) {
+        Agnode_t *node = agnode(graph, currentState->nome, 1);
+        if (currentState->final == 1) {
+            agset(node, "shape", "doublecircle");
+            agset(node, "color", "blue");
+        } else {
+            agset(node, "shape", "circle");
+        }
+        currentState = currentState->next;
+    }
+
+    gvLayout(gvc, graph, "dot");
+
+    fp = fopen(filename, "w");
+    agwrite(graph, fp);
+    fclose(fp);
+
+    gvRenderFilename(gvc, graph, "png", "automaton.png");
+
+    gvFreeLayout(gvc, graph);
+    agclose(graph);
+    gvFreeContext(gvc);
 }
