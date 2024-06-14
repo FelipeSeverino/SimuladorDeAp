@@ -1,10 +1,6 @@
 digraph automaton {
-	graph [bb="0 0 198 36"];
+	graph [bb="0 0 54 36"];
 	node [label="\N"];
 	"q0
-";
-	"q1
-";
-	"q2
 ";
 }

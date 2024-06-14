@@ -5,6 +5,8 @@
 #include "include/graphviz/gvc.h"
 #include "include/graphviz/cgraph.h"
 #include "include/graphviz/cdt.h"
+#include "include/graphviz/gvplugin.h"
+#include "include/graphviz/gvplugin_layout.h"
 
 void simulacao();
 void generateAutomatonDot(AF *af, const char *filename);
@@ -73,8 +75,14 @@ void simulacao() {
         nEstados++;
     }
 
+    
 
+    printf("\nGerando grafo visual...\n");
     generateAutomatonDot(af, "teste.dot");
+    printf("Grafo criado com sucesso!\n");
+    printf("\nDeletando simulacao anterior...\n");
+    deleteAf(af);
+    printf("Simulacao deletada com sucesso!\n\n");
 }
 
 

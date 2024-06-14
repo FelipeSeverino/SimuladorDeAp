@@ -74,7 +74,7 @@ int reinicia(PILHA *s) {
   return 0;
 }
 
-void destroi(PILHA *s) {
+void destroiPilha(PILHA *s) {
   reinicia(s);
   free(s);
 }

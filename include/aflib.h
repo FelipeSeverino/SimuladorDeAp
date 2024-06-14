@@ -31,6 +31,8 @@ AF* criarAF() {
 }
 
 
+
+
 typedef struct estado {
     int inicial; // 0 = false, 1 = true
     int final; // 0 = false, 1 = true
@@ -137,6 +139,35 @@ void inserirTransicao(char symbol, char insertPile, char popPile, char *from, ch
         }
         currentTransicao->next = transicao;
     }
+}
+
+
+void deleteAf(AF *af) {
+    if (af == NULL) {return;}
+
+    if (af->pilha != NULL) {
+        destroiPilha(af->pilha);
+    }
+
+    ESTADO *estado = af->h_estado;
+    while (estado != NULL) {
+        ESTADO *next = estado->next;
+        
+        free(estado->nome);
+        free(estado);
+        estado = next;
+    }
+
+    TRANSICAO *transicao = af->h_transicao;
+    while (transicao != NULL) {
+        TRANSICAO *next = transicao->next;
+
+        free(transicao->q_from);
+        free(transicao->q_to);
+        free(transicao);
+        transicao = next;
+    }
+    
 }
 
 #endif
