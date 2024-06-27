@@ -14,7 +14,7 @@ typedef struct af {
     ESTADO *h_estado;
     TRANSICAO *h_transicao;
 
-    size_t n_estados;
+    int n_estados;
 } AF;
 
 AF* criarAF() {
@@ -27,6 +27,7 @@ AF* criarAF() {
 
     novoAF->h_estado = NULL;
     novoAF->h_transicao = NULL;
+    novoAF->n_estados = 0;
 
     return novoAF;
 }
@@ -194,7 +195,7 @@ ESTADO** getArrayEstado(int size) {
 
 int estadoPercorrido(ESTADO *currentState, ESTADO **visited, int n) {
     for (int i = 0; i < n; i++) {
-        if (strcmp(currentState->nome,visited[n]->nome) == 0) {
+        if (strcmp(currentState->nome,visited[i]->nome) == 0) {
             return 1;
         }
     }
@@ -296,21 +297,27 @@ int reconhecerPalavra(char *palavra, int index, ESTADO *currentState, PILHA *sta
 
         if (tr->symbol == '#' && strcmp(tr->q_from, currentState->nome) == 0) { //transicao vazia
             if (tr->popStack == '#' || tr->popStack == stack->topo->symbol) {
-                if (!estadoPercorrido(currentState, visitados, af->n_estados)) {
+                if (!estadoPercorrido(currentState, visitados, nVisitados)) {
                     nVisitados++;
                     visitados[nVisitados] = currentState;
 
                     if (tr->popStack != '#') {voidPop(stack);}
-                    for (int j = 0; j < strlen(tr->insertStack); j++) {
-                        push(stack, tr->insertStack[j]);
+                    if (strcmp(tr->insertStack, "#") != 0) {
+                        //printf("Entrou insere pilha\n");
+                        for (int j = 0; j < strlen(tr->insertStack); j++) {
+                            printf("insere %c\n", tr->insertStack[j]);
+                            push(stack, tr->insertStack[j]);
+                        }
                     }
 
                     ESTADO *q_to = getEstadoByName(tr->q_to, af);
                     int reconhece = reconhecerPalavra(palavra, index, q_to, stack, visitados, nVisitados, af, nivel+1);
                     if (reconhece) {return 1;}
 
-                    for (int j = 0; j < strlen(tr->insertStack); j++) {
-                        voidPop(stack);
+                    if (strcmp(tr->insertStack, "#") != 0) {
+                        for (int j = 0; j < strlen(tr->insertStack); j++) {
+                            voidPop(stack);
+                        }
                     }
                     if (tr->popStack != '#') {push(stack, tr->popStack);}
 
@@ -330,6 +337,7 @@ int reconhecerPalavra(char *palavra, int index, ESTADO *currentState, PILHA *sta
 
 int verificarPalavra(char *palavra, AF *af) {
     int n = af->n_estados;
+    printf("n_estados: %d\n", n);
 
     char newPalavra[101] = "";
     strcat(newPalavra, palavra);
