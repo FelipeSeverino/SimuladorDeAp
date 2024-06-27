@@ -32,7 +32,8 @@ int isEmpty(PILHA *s){
 }
 
 void push(PILHA *s, char letra){
-    NodoStack *aux = (struct nodoStack*)malloc(sizeof(struct nodoStack));
+    printf("Letra %c\n", letra);
+    NodoStack *aux = (NodoStack*)malloc(sizeof(NodoStack));
 
     if(aux == NULL){
         printf("Erro ao empilhar letra!\n");
@@ -58,6 +59,43 @@ int pop(char *letra, PILHA *s){
     }
 }
 
+void voidPop(PILHA *s) {
+    if(!isEmpty(s)){
+        NodoStack *aux = s->topo;
+        s->topo = aux->next;
+        free(aux);
+    }
+}
+
+PILHA* clonarPilha(PILHA *pilha) {
+    PILHA *novaPilha = (PILHA*) malloc(sizeof(PILHA));
+    if (novaPilha == NULL) {
+        printf("Erro ao clonar pilha!\n");
+        return NULL;
+    }
+
+    NodoStack *newStackCurrentNode = NULL;
+    NodoStack *oldStackCurrentNode = pilha->topo;
+
+    while (oldStackCurrentNode != NULL) {
+        NodoStack *aux = (NodoStack*) malloc(sizeof(NodoStack));
+        aux->symbol = oldStackCurrentNode->symbol;
+        aux->next = NULL;
+
+        if (newStackCurrentNode == NULL) {
+            novaPilha->topo = aux;
+        }
+        else {
+            newStackCurrentNode->next = aux;    
+        }
+        newStackCurrentNode = aux;
+
+        oldStackCurrentNode = oldStackCurrentNode->next;
+    }
+
+    return novaPilha;
+}
+
 int reinicia(PILHA *s) {
   NodoStack *aux = NULL;
   if (!isEmpty(s)) {
@@ -78,5 +116,6 @@ void destroiPilha(PILHA *s) {
   reinicia(s);
   free(s);
 }
+
 
 #endif

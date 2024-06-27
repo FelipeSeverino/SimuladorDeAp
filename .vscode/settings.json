@@ -3,6 +3,7 @@
         "string.h": "c",
         "stdlib.h": "c",
         "cdt.h": "c",
-        "cgraph.h": "c"
+        "cgraph.h": "c",
+        "aflib.h": "c"
     }
 }

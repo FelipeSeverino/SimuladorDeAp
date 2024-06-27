@@ -75,7 +75,54 @@ void simulacao() {
         nEstados++;
     }
 
-    
+    while (1) { //Criacao de transicoes
+        printf("\n\n1 - Criar nova transicao\n2 - Proximo passo\n");
+        printf("comando >> ");
+        scanf("%d", &opcao);
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+
+        if (opcao == 2) {
+            break;
+        }
+
+        char q_from[5];
+        printf("Do estado >> ");
+        fgets(q_from, 5, stdin);
+
+        char q_to[5];
+        printf("Para o estado >> ");
+        fgets(q_to, 5, stdin);
+
+        char simbolo;
+        printf("Simbolo >> ");
+        scanf("%c", &simbolo);
+        while ((c = getchar()) != '\n' && c != EOF);
+
+        char pushSymbol[5];
+        printf("Adiciona a pilha >> ");
+        fgets(pushSymbol, 5, stdin);
+
+        char popFromPile;
+        printf("Remove da pilha >> ");
+        scanf("%c", &simbolo);
+        while ((c = getchar()) != '\n' && c != EOF);
+
+
+        inserirTransicao(simbolo, popFromPile, pushSymbol, q_from, q_to, af);
+    }
+
+    while (1) {
+        printf("\n**Reconhecimento de palavras**\n\n");
+        printf("Digite uma palavra >> ");
+        char *palavra;
+        fgets(palavra, 100, stdin);
+
+        int validade = verificarPalavra(palavra, af);
+        if (validade) {
+            printf("Palavra valida!");
+        }
+    }
 
     printf("\nGerando grafo visual...\n");
     generateAutomatonDot(af, "teste.dot");
