@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "include/aflib.h"
+#include "include/grviz.h"
 
 void teste1(char *palavra) { //ab
     printf("TESTE 1\n");
@@ -76,13 +77,19 @@ void teste3(char *palavra) { //|a| = |b|
         printf("Palavra invalida!\n");
     }
 
+    char comando[10000] = "start \"\" \"";
+    geraLinkGraphviz(comando, af);
+    strcat(comando, "\"");
+    printf("link: %s\n", comando);
+    system(comando);
+
     printf("###############################\n");
 }
 
 int main() {
     //teste1("ab");
     //teste2("aabb");
-    teste3("abbbbaaab");
+    teste3("abbabbaaab");
 
     return 0;
 }

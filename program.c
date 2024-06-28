@@ -133,36 +133,3 @@ void simulacao() {
 }
 
 
-void generateAutomatonDot(AF *af, const char *filename) {
-    GVC_t *gvc;
-    Agraph_t *graph;
-    FILE *fp;
-
-    gvc = gvContext();
-
-    graph = agopen("automaton", Agdirected, NULL);
-
-    ESTADO *currentState = af->h_estado;
-    while (currentState != NULL) {
-        Agnode_t *node = agnode(graph, currentState->nome, 1);
-        if (currentState->final == 1) {
-            agset(node, "shape", "doublecircle");
-            agset(node, "color", "blue");
-        } else {
-            agset(node, "shape", "circle");
-        }
-        currentState = currentState->next;
-    }
-
-    gvLayout(gvc, graph, "dot");
-
-    fp = fopen(filename, "w");
-    agwrite(graph, fp);
-    fclose(fp);
-
-    gvRenderFilename(gvc, graph, "png", "automaton.png");
-
-    gvFreeLayout(gvc, graph);
-    agclose(graph);
-    gvFreeContext(gvc);
-}
