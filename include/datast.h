@@ -32,7 +32,7 @@ int isEmpty(PILHA *s){
 }
 
 void push(PILHA *s, char letra){
-    printf("Letra %c\n", letra);
+    //printf("Letra %c\n", letra);
     NodoStack *aux = (NodoStack*)malloc(sizeof(NodoStack));
 
     if(aux == NULL){

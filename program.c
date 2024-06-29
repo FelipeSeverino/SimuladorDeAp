@@ -2,14 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "include/aflib.h"
-#include "include/graphviz/gvc.h"
-#include "include/graphviz/cgraph.h"
-#include "include/graphviz/cdt.h"
-#include "include/graphviz/gvplugin.h"
-#include "include/graphviz/gvplugin_layout.h"
+#include "include/grviz.c"
 
 void simulacao();
-void generateAutomatonDot(AF *af, const char *filename);
 
 int main() {
     while (1) {
@@ -125,7 +120,7 @@ void simulacao() {
     }
 
     printf("\nGerando grafo visual...\n");
-    generateAutomatonDot(af, "teste.dot");
+    geraLinkGraphviz(af, "teste.dot");
     printf("Grafo criado com sucesso!\n");
     printf("\nDeletando simulacao anterior...\n");
     deleteAf(af);
@@ -133,36 +128,3 @@ void simulacao() {
 }
 
 
-void generateAutomatonDot(AF *af, const char *filename) {
-    GVC_t *gvc;
-    Agraph_t *graph;
-    FILE *fp;
-
-    gvc = gvContext();
-
-    graph = agopen("automaton", Agdirected, NULL);
-
-    ESTADO *currentState = af->h_estado;
-    while (currentState != NULL) {
-        Agnode_t *node = agnode(graph, currentState->nome, 1);
-        if (currentState->final == 1) {
-            agset(node, "shape", "doublecircle");
-            agset(node, "color", "blue");
-        } else {
-            agset(node, "shape", "circle");
-        }
-        currentState = currentState->next;
-    }
-
-    gvLayout(gvc, graph, "dot");
-
-    fp = fopen(filename, "w");
-    agwrite(graph, fp);
-    fclose(fp);
-
-    gvRenderFilename(gvc, graph, "png", "automaton.png");
-
-    gvFreeLayout(gvc, graph);
-    agclose(graph);
-    gvFreeContext(gvc);
-}
