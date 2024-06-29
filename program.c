@@ -2,14 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "include/aflib.h"
-#include "include/graphviz/gvc.h"
-#include "include/graphviz/cgraph.h"
-#include "include/graphviz/cdt.h"
-#include "include/graphviz/gvplugin.h"
-#include "include/graphviz/gvplugin_layout.h"
+#include "include/grviz.c"
 
 void simulacao();
-void generateAutomatonDot(AF *af, const char *filename);
 
 int main() {
     while (1) {
@@ -125,7 +120,7 @@ void simulacao() {
     }
 
     printf("\nGerando grafo visual...\n");
-    generateAutomatonDot(af, "teste.dot");
+    geraLinkGraphviz(af, "teste.dot");
     printf("Grafo criado com sucesso!\n");
     printf("\nDeletando simulacao anterior...\n");
     deleteAf(af);

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "include/aflib.h"
-#include "include/grviz.h"
+#include "include/grviz.c"
 
 void teste1(char *palavra) { //ab
     printf("TESTE 1\n");
@@ -89,7 +89,47 @@ void teste3(char *palavra) { //|a| = |b|
 int main() {
     //teste1("ab");
     //teste2("aabb");
-    teste3("abbabbaaab");
+    //teste3("abbabbaaab");
+
+    // char *q0 = (char*) malloc(sizeof(char) * 5);
+    // char *q1 = (char*) malloc(sizeof(char) * 5);
+    // char symbol;
+    // char pop;
+    // char *push = (char*) malloc(sizeof(char) * 5);
+
+    // scanf("%s->%s (%c,%c,%s)\n", q0, q1, symbol, pop, push);
+
+    // printf("\nretorno -> %s->%s (%c,%c,%s)\n", q0, q1, &symbol, &pop, push);
+
+    char *q0 = (char*) malloc(sizeof(char) * 5);
+    char *q1 = (char*) malloc(sizeof(char) * 5);
+    char symbol;
+    char pop;
+    char temp_push[5]; // Temporary buffer to read the push string
+
+    if (q0 == NULL || q1 == NULL) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+
+    printf("Enter input in the format q0->q1 (symbol,pop,push):\n");
+    scanf("%4s->%4s (%c,%c,%4s)", q0, q1, &symbol, &pop, temp_push);
+
+    char *push = (char*) malloc(sizeof(char) * (strlen(temp_push) + 1));
+    if (push == NULL) {
+        printf("Memory allocation failed\n");
+        free(q0);
+        free(q1);
+        return 1;
+    }
+    strcpy(push, temp_push);
+
+    printf("\nretorno -> %s->%s (%c,%c,%s)\n", q0, q1, symbol, pop, push);
+
+    // Free the allocated memory
+    free(q0);
+    free(q1);
+    free(push);
 
     return 0;
 }
