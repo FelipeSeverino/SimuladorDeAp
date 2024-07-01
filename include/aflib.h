@@ -209,7 +209,7 @@ int reconhecerPalavra(char *palavra, int index, ESTADO *currentState, PILHA *sta
     for (int i = 1; i <= nivel; i++) {
         strcat(identacao, "   ");
     }
-    printf("--------\n%spalavra: %s | letra: %c | indice: %d | estado: %s\n", identacao, palavra, palavra[index], index, currentState->nome);
+    //printf("--------\n%spalavra: %s | letra: %c | indice: %d | estado: %s\n", identacao, palavra, palavra[index], index, currentState->nome);
 
     if (palavra[index] == '?' || index == strlen(palavra)) {
         //printf("-Entrou if 1\n");
@@ -221,7 +221,7 @@ int reconhecerPalavra(char *palavra, int index, ESTADO *currentState, PILHA *sta
     TRANSICAO *tr = af->h_transicao;
     strcat(identacao, " ");
     while (tr != NULL) {
-        printf("%str -> q_from: %s | q_to: %s | symbol: %c | pop: %c | push: %s\n", identacao, tr->q_from, tr->q_to, tr->symbol, tr->popStack, tr->insertStack);
+        //printf("%str -> q_from: %s | q_to: %s | symbol: %c | pop: %c | push: %s\n", identacao, tr->q_from, tr->q_to, tr->symbol, tr->popStack, tr->insertStack);
         if (tr->symbol == palavra[index] && strcmp(tr->q_from, currentState->nome) == 0) { //transicao
             if (tr->popStack == '#' || tr->popStack == stack->topo->symbol) {
                 //printf("Entrou caso 1\n");
@@ -231,7 +231,7 @@ int reconhecerPalavra(char *palavra, int index, ESTADO *currentState, PILHA *sta
                 if (strcmp(tr->insertStack, "#") != 0) {
                     //printf("Entrou insere pilha\n");
                     for (int j = 0; j < strlen(tr->insertStack); j++) {
-                        printf("insere %c\n", tr->insertStack[j]);
+                        //printf("insere %c\n", tr->insertStack[j]);
                         push(stack, tr->insertStack[j]);
                     }
                 }
@@ -240,9 +240,20 @@ int reconhecerPalavra(char *palavra, int index, ESTADO *currentState, PILHA *sta
 
                 ESTADO *q_to = getEstadoByName(tr->q_to, af);
                 //printf("Antes reconhece palavra");
+
+                char *stringPilha = getStringPilha(stack);
+                
                 int reconhece = reconhecerPalavra(palavra, index+1, q_to, stack, visitedArray, 0, af, nivel+1);
                 //printf("Depois reconhece palavra\n");
-                if (reconhece) {return 1;}
+                if (reconhece) {
+                    char s = tr->symbol;
+                    if (s == '?') {s = ' ';}
+                    printf("%d) %c  |  %s->%s  |  %s\n", nivel, s, tr->q_from, tr->q_to, stringPilha);   
+
+                    return 1;
+                }
+
+                free(stringPilha);
 
                 if (strcmp(tr->insertStack, "#") != 0) {
                     for (int j = 0; j < strlen(tr->insertStack); j++) {
@@ -251,7 +262,6 @@ int reconhecerPalavra(char *palavra, int index, ESTADO *currentState, PILHA *sta
                 }
                 if (tr->popStack != '#') {push(stack, tr->popStack);}
 
-                free(visitedArray);
             }
         }
 
@@ -270,9 +280,17 @@ int reconhecerPalavra(char *palavra, int index, ESTADO *currentState, PILHA *sta
                         }
                     }
 
+                    char *stringPilha = getStringPilha(stack);
+
                     ESTADO *q_to = getEstadoByName(tr->q_to, af);
                     int reconhece = reconhecerPalavra(palavra, index, q_to, stack, visitados, nVisitados, af, nivel+1);
-                    if (reconhece) {return 1;}
+                    if (reconhece) {
+                        char s = tr->symbol;
+                        if (s == '?') {s = ' ';}
+                        printf("%d) %c  |  %s->%s  |  %s\n", nivel, s, tr->q_from, tr->q_to, stringPilha);     
+
+                        return 1;
+                    }
 
                     if (strcmp(tr->insertStack, "#") != 0) {
                         for (int j = 0; j < strlen(tr->insertStack); j++) {
@@ -303,14 +321,20 @@ int verificarPalavra(char *palavra, AF *af) {
     strcat(newPalavra, palavra);
     strcat(newPalavra, "?");
 
-    printf("%s\n", newPalavra);
+   // printf("%s\n", newPalavra);
 
     ESTADO **visitedArray = getArrayEstado(n);
 
     PILHA *stack = (PILHA*) malloc(sizeof(PILHA));
+    stack->topo = NULL;
     push(stack, '?');
 
-    return reconhecerPalavra(newPalavra, 0, af->h_estado, stack, visitedArray, 0, af, 0);
+    int retorno = reconhecerPalavra(newPalavra, 0, af->h_estado, stack, visitedArray, 0, af, 0);
+    if (retorno) {
+        printf("   %s  %s  |\n", newPalavra, af->h_estado->nome);
+    }
+
+    return retorno;
 }
 
 #endif

@@ -117,5 +117,24 @@ void destroiPilha(PILHA *s) {
   free(s);
 }
 
+char *getStringPilha(PILHA *stack) {
+    if (stack == NULL) {
+        return NULL;
+    }
+
+    char *retorno = malloc(sizeof(char) * 100);
+    strcpy(retorno, "");
+
+    NodoStack *no = stack->topo;
+    while (no != NULL) {
+        if (no->symbol != '\0' && no->symbol != '?') {
+             strncat(retorno, &no->symbol, 1);
+        }
+       
+        no = no->next;
+    }
+
+    return retorno;
+}
 
 #endif

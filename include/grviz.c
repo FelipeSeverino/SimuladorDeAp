@@ -86,6 +86,7 @@ void geraLinkGraphviz(char *link, AF *af) {
         estado1 = estado1->next;
     }
 
+    strcat(link, QuebraL);
     strcat(link, ChavesFecha);
 }
 #endif

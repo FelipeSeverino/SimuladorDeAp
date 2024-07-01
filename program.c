@@ -35,6 +35,7 @@ void simulacao() {
     //Leitura dos estados
     int opcao = 0;
     int nEstados = 0;
+
     while (1) { //Criacao de estados
         printf("\n\n1 - Criar novo estado\n2 - Proximo passo\n");
         printf("comando >> ");
@@ -53,7 +54,7 @@ void simulacao() {
 
         char nome[5];
         printf("Digite o nome do estado: \n");
-        fgets(nome, 5, stdin);
+        scanf("%s", nome);
 
         int inicial = 0;
         int final = 0;
@@ -70,8 +71,9 @@ void simulacao() {
         nEstados++;
     }
 
+    printf("\n\n-------------------\nExemplo de registro de transicao: q0->q1 (a, B, #)\nOBS: # == epsilon\n     ? == fita/pilha vazia\n");
     while (1) { //Criacao de transicoes
-        printf("\n\n1 - Criar nova transicao\n2 - Proximo passo\n");
+        printf("\n1 - Criar nova transicao\n2 - Proximo passo\n");
         printf("comando >> ");
         scanf("%d", &opcao);
         int c;
@@ -81,47 +83,46 @@ void simulacao() {
             break;
         }
 
-        char q_from[5];
-        printf("Do estado >> ");
-        fgets(q_from, 5, stdin);
+        printf("Transicao: ");
 
-        char q_to[5];
-        printf("Para o estado >> ");
-        fgets(q_to, 5, stdin);
+        char *q0 = (char*) malloc(sizeof(char) * 5);
+        char *q1 = (char*) malloc(sizeof(char) * 5);
+        char symbol;
+        char pop;
+        char *push = (char*) malloc(sizeof(char) * 5);
+        char linha[30], *result;
 
-        char simbolo;
-        printf("Simbolo >> ");
-        scanf("%c", &simbolo);
-        while ((c = getchar()) != '\n' && c != EOF);
-
-        char pushSymbol[5];
-        printf("Adiciona a pilha >> ");
-        fgets(pushSymbol, 5, stdin);
-
-        char popFromPile;
-        printf("Remove da pilha >> ");
-        scanf("%c", &simbolo);
-        while ((c = getchar()) != '\n' && c != EOF);
-
-
-        inserirTransicao(simbolo, popFromPile, pushSymbol, q_from, q_to, af);
+        if ((result = fgets(linha, 30, stdin)) != NULL) {
+            sscanf(result, "%[^-]->%4s (%c,%c,%[^)]", q0, q1, &symbol, &pop, push);
+        }
+        
+        inserirTransicao(symbol, pop, push, q0, q1, af);
+        printf("\nregistrado: qDe:|%s| qPara:|%s| s:|%c| pull:|%c| push:|%s|\n", q0, q1, symbol, pop, push);
     }
 
+    printf("\n**Reconhecimento de palavras**\n");
     while (1) {
-        printf("\n**Reconhecimento de palavras**\n\n");
-        printf("Digite uma palavra >> ");
-        char *palavra;
-        fgets(palavra, 100, stdin);
+        printf("Digite uma palavra (ou 'exit' para sair)>> ");
+        char palavra[99] = "";
+        scanf("%s", palavra);
+        printf("%s\n", palavra);
+        if (strcmp(palavra, "exit") == 0) {break;}
 
         int validade = verificarPalavra(palavra, af);
         if (validade) {
-            printf("Palavra valida!");
+            printf("Palavra valida!\n");
+        }
+        else {
+            printf("Palavra invalida!\n");
         }
     }
 
     printf("\nGerando grafo visual...\n");
-    geraLinkGraphviz(af, "teste.dot");
-    printf("Grafo criado com sucesso!\n");
+    char comando[10000] = "start \"\" \"";
+    geraLinkGraphviz(comando, af);
+    strcat(comando, "\"");
+    system(comando);
+    
     printf("\nDeletando simulacao anterior...\n");
     deleteAf(af);
     printf("Simulacao deletada com sucesso!\n\n");
